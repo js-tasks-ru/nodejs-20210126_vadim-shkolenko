@@ -8,7 +8,7 @@ const server = new http.Server();
 server.on('request', (req, res) => {
   const pathname = url.parse(req.url).pathname.slice(1);
 
-  if (pathname.split('/').length > 1) {
+  if (pathname.includes('/')) {
     res.statusCode = 400;
     res.end('Wrong path');
   }
@@ -26,6 +26,8 @@ server.on('request', (req, res) => {
           res.statusCode = 500;
           res.end('Something went wrong');
         });
+
+        req.on('aborted', () => readStream.destroy());
       } else {
         res.statusCode = 404;
         res.end('Not found');
