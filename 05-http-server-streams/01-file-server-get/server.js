@@ -11,27 +11,28 @@ server.on('request', (req, res) => {
   if (pathname.includes('/')) {
     res.statusCode = 400;
     res.end('Wrong path');
+    return;
   }
 
   const filepath = path.join(__dirname, 'files', pathname);
 
   switch (req.method) {
     case 'GET':
-      if (fs.existsSync(filepath)) {
-        const readStream = fs.createReadStream(filepath);
+      const readStream = fs.createReadStream(filepath);
 
-        readStream.pipe(res);
+      readStream.pipe(res);
 
-        readStream.on('error', () => {
+      readStream.on('error', (error) => {
+        if (error.code === 'ENOENT') {
+          res.statusCode = 404;
+          res.end('File not found');
+        } else {
           res.statusCode = 500;
           res.end('Something went wrong');
-        });
+        }
+      });
 
-        req.on('aborted', () => readStream.destroy());
-      } else {
-        res.statusCode = 404;
-        res.end('Not found');
-      }
+      req.on('aborted', () => readStream.destroy());
       break;
     default:
       res.statusCode = 501;
