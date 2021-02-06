@@ -6,6 +6,11 @@ const fs = require('fs');
 const server = new http.Server();
 
 server.on('request', (req, res) => {
+  res.on('error', () => {
+    res.statusCode = 500;
+    res.end('Something went wrong');
+  });
+
   const pathname = url.parse(req.url).pathname.slice(1);
 
   if (pathname.split('/').length > 1) {
