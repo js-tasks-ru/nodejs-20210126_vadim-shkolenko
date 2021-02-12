@@ -17,15 +17,9 @@ server.on('request', (req, res) => {
 
   const filepath = path.join(__dirname, 'files', pathname);
 
-  if (fs.existsSync(filepath)) {
-    res.statusCode = 409;
-    res.end('File already exist');
-    return;
-  }
-
   switch (req.method) {
     case 'POST':
-      const writeStream = fs.createWriteStream(filepath);
+      const writeStream = fs.createWriteStream(filepath, {flags: 'wx'});
 
       req
           .pipe(new LimitSizeStream({limit: 1000000}))
@@ -36,8 +30,13 @@ server.on('request', (req, res) => {
           })
           .pipe(writeStream)
           .on('error', (error) => {
-            res.statusCode = 500;
-            res.end(error.message);
+            if (error.code === 'EEXIST') {
+              res.statusCode = 409;
+              res.end('File already exist');
+            } else {
+              res.statusCode = 500;
+              res.end(error.message);
+            }
           });
 
       writeStream.on('finish', () => {
