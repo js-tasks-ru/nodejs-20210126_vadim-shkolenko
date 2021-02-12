@@ -16,17 +16,22 @@ server.on('request', (req, res) => {
 
   const filepath = path.join(__dirname, 'files', pathname);
 
-  if (!fs.existsSync(filepath)) {
-    res.statusCode = 404;
-    res.end('File not found');
-    return;
-  }
-
   switch (req.method) {
     case 'DELETE':
-      fs.unlinkSync(filepath);
-      res.statusCode = 200;
-      res.end('File deleted');
+      fs.unlink(filepath, (err) => {
+        if (err) {
+          if (err.code === 'ENOENT') {
+            res.statusCode = 404;
+            res.end('File not found');
+          } else {
+            res.statusCode = 500;
+            res.end(error.message);
+          }
+        } else {
+          res.statusCode = 200;
+          res.end('File deleted');
+        }
+      });
       break;
 
     default:
