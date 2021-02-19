@@ -5,25 +5,27 @@ const convertObject = require('../utils/convertObject');
 module.exports.productsBySubcategory = async function productsBySubcategory(ctx, next) {
   const id = ctx.query.subcategory;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  if (!id) return next();
+
+  if (id && !mongoose.Types.ObjectId.isValid(id)) {
     ctx.status = 400;
     ctx.body = 'invalid id';
     return;
   }
 
-  const products = await Product.find({subcategory: id});
+  const products = await Product.find({subcategory: id}).limit(20);
   const converted = [];
   products.forEach((item) => converted.push(convertObject(item)));
 
-  ctx.products = converted;
+  ctx.body = {products: converted};
 
-  await next();
 };
 
 module.exports.productList = async function productList(ctx, next) {
-  ctx.body = {products: ctx.products};
-
-  await next();
+  const products = await Product.find().limit(20);
+  const converted = [];
+  products.forEach((item) => converted.push(convertObject(item)));
+  ctx.body = {products: converted};
 };
 
 module.exports.productById = async function productById(ctx, next) {
