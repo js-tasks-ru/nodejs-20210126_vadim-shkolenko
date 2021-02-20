@@ -18,7 +18,6 @@ module.exports.productsBySubcategory = async function productsBySubcategory(ctx,
   products.forEach((item) => converted.push(convertObject(item)));
 
   ctx.body = {products: converted};
-
 };
 
 module.exports.productList = async function productList(ctx, next) {
