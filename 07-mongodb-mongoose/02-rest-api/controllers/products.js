@@ -45,7 +45,5 @@ module.exports.productById = async function productById(ctx, next) {
   }
 
   ctx.body = {product: convertObject(product)};
-
-  await next();
 };
 
