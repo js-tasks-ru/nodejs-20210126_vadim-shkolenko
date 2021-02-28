@@ -13,6 +13,7 @@ export default class App extends Component {
       <Router>
         <Switch>
           <Route exact path="/" component={Login} />
+          {/*сюда перекидывает после подтверждения авторизации у провайдера*/}
           <Route path="/oauth/:provider" component={OAuth} />
         </Switch>
       </Router>
