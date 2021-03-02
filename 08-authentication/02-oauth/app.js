@@ -29,7 +29,9 @@ const router = new Router({prefix: '/api'});
 
 router.post('/login', login);
 
+// пользователь хочет залогиниться, даем ссылку на редирект
 router.get('/oauth/:provider', oauth);
+// после того как клиент получает код от провайдера, даелается запрос на получение токена от сервера
 router.post('/oauth_callback', handleMongooseValidationError, oauthCallback);
 
 app.use(router.routes());
