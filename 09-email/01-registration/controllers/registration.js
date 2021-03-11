@@ -39,10 +39,7 @@ module.exports.confirm = async (ctx, next) => {
   );
 
   if (user) {
-    const token = uuid();
-    const lastVisit = new Date();
-
-    await Session.create({user, token, lastVisit});
+    const token = await ctx.login(user);
 
     ctx.body = {token};
   } else {

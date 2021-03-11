@@ -57,7 +57,7 @@ router.use(async (ctx, next) => {
   const session = await Session.findOne({token}).populate('user');
 
   if (session) {
-    await Session.updateOne({}, {$set: {lastVisit: new Date()}});
+    await Session.updateOne({token}, {$set: {lastVisit: new Date()}});
     ctx.user = session.user;
   } else {
     ctx.throw(401, 'Неверный аутентификационный токен');
